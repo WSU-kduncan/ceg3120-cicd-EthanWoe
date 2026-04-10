@@ -21,10 +21,10 @@ jobs:
       password: ${{ secrets.DOCKER_PASSWORD }}
 
     # Build and push image
-    -name build and push image
-    uses: docker/build-push-action@v5
-    with
-      context: .
-      push: true
-      tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+    - name: Build and push image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
 
