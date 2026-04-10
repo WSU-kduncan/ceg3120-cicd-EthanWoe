@@ -2,7 +2,8 @@ name: Build and push image
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
 
 jobs: 
   build:
@@ -19,6 +20,19 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
+
+      # Generate tags from git version
+      - name: get metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/cookiesite
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
+
       # Build and push image
       - name: Build and push image
         uses: docker/build-push-action@v5
@@ -26,4 +40,4 @@ jobs:
           context: ./project4
           file: ./project4/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/cookiesite:latest
+          tags: ${{ steps.meta.outputs.tags }}
