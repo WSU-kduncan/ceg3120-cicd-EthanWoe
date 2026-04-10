@@ -3,7 +3,7 @@
 
 ## Description
 * Goal:
-  * The goal of this project is to build a container image from Apache and push it to Docker Hub, make a custom yml file template for AWS, run the website container on the instances, and configure HAProxy as the load balancer to direct traffic to the pool.
+  * The goal of this project is to build a container image from Apache and push it to Docker Hub, make a custom yml file template for AWS, run the website container on the instances, and configure HAProxy as the load balancer to direct traffic to the pool. And have GitHub Actions validate and push changes and tag dockerhub and github.
 
 
 
@@ -38,8 +38,8 @@
 * Values to Update
   * The image name would need to be updated as it would not be the same for user to user.
   * YOUR_USERNAME/cookiesite  
-
-  * The secrets would also need to change to whatever they are named or the user would have to add their own token and username to GitHub.
+ 
+ * The secrets would also need to change to whatever they are named or the user would have to add their own token and username to GitHub.
    * DOCKER_USERNAME  
    * DOCKER_TOKEN
 
@@ -47,14 +47,30 @@
 
   
  ## Part 3: Web Service Container
-* Website Content:
-  * A cookie website that shows different cookie recipes.
-  * [HTML and CSS files](https://github.com/WSU-kduncan/ceg3120-essentials-EthanWoe/tree/main/project3/web-content)
+* Generating `tag`s 
+    * You can see the tags in the git reposotiry under releases called tags. You can also see it in action, and it properly labels the action with the right tag.
+    * To generate a tag, do: ``` git tag -a v1.0.3 -m "test"```. This will set your branch in this version number
+    * To push this version do ```git push origin v1.0.3```
+* Semantic Versioning Container Images with GitHub Actions
+    * The automation is configured to trigger specifically when a new **tag** is pushed to the repository. This ensures that every  release in git has a new image build for the container.
+    * workflow steps
+      * Checkout: Pulls the repository code into the runner.
+      * Docker Login: Authenticates with DockerHub using stored secrets.
+      * Get Metadata: Parses the Git tag to determine the image version.
+      * Build and Push: Compiles the Dockerfile and pushes the resulting image to DockerHub with the semantic version tag.
+    * Explanation/highlight of values that need to be updated if used in a different repository
+      * Workflow Changes: Update the `image_name` variable in the YAML file to match your project.
+      * Repository Changes: Ensure `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are added to the new repository's **Actions Secrets**.
+    *  [Link to actions file](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/.github/workflows/docker.yml)
+* Testing & Validating
+    * Check the actions tab in the repository. A successful run will show a green checkmark next to the "Build and Push" job. 
+    * You can verify by pulling the image, then running the container.
+    * [Link to your DockerHub repository](https://hub.docker.com/r/ethanwoe/cookiesite/tags)
  
-## Part 1: Web Service Container
-* Website Content:
-  * A cookie website that shows different cookie recipes.
-  * [HTML and CSS files](https://github.com/WSU-kduncan/ceg3120-essentials-EthanWoe/tree/main/project3/web-content)
+## Part 4: Diagram
+
+
+
  
 
  
@@ -65,13 +81,7 @@
 
 * Gemini Prompts:
   ```
-  Create a cookie website with two HTML files and a CSS file
-  ```
-  ```
-  Am i missing anything from this yml file from this assignment?
-  ```
-  ```
-  in ha proxy i cant connect to the stats website
+  What is this yml syntax error mean
   ```
 * Lucid Chart:
   ```
