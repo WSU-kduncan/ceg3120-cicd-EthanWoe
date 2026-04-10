@@ -24,6 +24,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ceg3120-cicd-EthanWoe/project4/Dockerfile
+          file: ./project4/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/cookiesite:latest
