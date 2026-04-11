@@ -68,6 +68,7 @@
     * [Link to your DockerHub repository](https://hub.docker.com/r/ethanwoe/cookiesite/tags)
  
 ## Part 4: Diagram
+<img width="968" height="748" alt="image" src="https://github.com/user-attachments/assets/7b2627ca-a807-4f77-bd26-4125996f2453" />
 
 
 
