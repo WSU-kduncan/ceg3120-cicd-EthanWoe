@@ -56,4 +56,4 @@
     - The bash script is made to stop the container, remove it, pull the new image, then start the container of the new image.
     - How to test / verify that the script successfully performs its taskings
         - Push a tag for a new version, then run the script. When the script is run, go to dockerhub and ook at the versioning on dockerhub
-    - **LINK to bash script** in repository
+    - [**LINK to bash script**](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/project5/deployement/script.sh)
