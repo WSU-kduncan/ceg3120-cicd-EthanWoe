@@ -1,1 +1,14 @@
+[Unit]
+Description=Webhook Listener for Project 5
+After=network.target
 
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement
+ExecStart=/usr/bin/webhook -hooks /home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement/hooks.json -verbose -port 9000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
