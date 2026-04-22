@@ -57,3 +57,29 @@
     - How to test / verify that the script successfully performs its taskings
         - Push a tag for a new version, then run the script. When the script is run, go to dockerhub and ook at the versioning on dockerhub
     - [**LINK to bash script**](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/project5/deployement/script.sh)
+
+## Webhook Troubleshooting and Fix
+
+If changes to `index.html` are not showing up on all 3 webservers, there are two common causes:
+
+1. The webhook was only redeploying one machine.
+2. The container image was not rebuilt/pushed after editing `index.html`.
+
+This repo now includes:
+
+- `project5/deployement/deploy-all.sh`: fan-out deploy script for `web1`, `web2`, and `web3`.
+- `project5/deployement/hooks.json`: fixed command path and both hook IDs (`redeploy-app` and `redeploy-webhook`) so either endpoint works.
+
+### Required setup on proxy/webhook host
+
+1. Ensure `deploy-all.sh` is executable:
+    - `chmod +x /home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement/deploy-all.sh`
+2. Ensure passwordless SSH from proxy to all three webservers as user `ubuntu`.
+3. Restart webhook service:
+    - `sudo systemctl daemon-reload`
+    - `sudo systemctl restart webhook`
+    - `sudo systemctl status webhook`
+
+### Important
+
+Editing `index.html` in git does not update running containers by itself. You must build and push a new Docker image first, then webhook-triggered redeploy can pull that new image on all servers.

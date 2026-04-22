@@ -1,9 +1,9 @@
 [
   {
-    "id": "redeploy-app",
+    "id": "redeploy-webhook",
     "execute-command": "/home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement/script.sh",
     "command-working-directory": "/home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement",
-    "response-message": "Signature verified. Triggering deploy on all webservers...",
+    "response-message": "Running script",
     "trigger-rule": {
       "match": {
         "type": "payload-hash-sha1",
