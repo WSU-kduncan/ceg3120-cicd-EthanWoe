@@ -1,0 +1,18 @@
+[
+  {
+    "id": "redeploy-app",
+    "execute-command": "./ceg3120-cicd-EthanWoe/project5/deployement/script.sh",
+    "command-working-directory": "./ceg3120-cicd-EthanWoe/project5/deployement",
+    "response-message": "Signature verified. Triggering script...",
+    "trigger-rule": {
+      "match": {
+        "type": "payload-hash-sha1",
+        "secret": "buh",
+        "parameter": {
+          "source": "header",
+          "name": "X-Hub-Signature"
+        }
+      }
+    }
+  }
+]
