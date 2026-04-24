@@ -58,28 +58,66 @@
         - Push a tag for a new version, then run the script. When the script is run, go to dockerhub and ook at the versioning on dockerhub
     - [**LINK to bash script**](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/project5/deployement/script.sh)
 
-## Webhook Troubleshooting and Fix
+## 2 Listen
+1. Configuring a `webhook` Listener on EC2 Instance
+    - How to install [adnanh's `webhook`](https://github.com/adnanh/webhook) to the EC2 instance
+        - ```sudo apt install webhook``` 
+    - How to verify successful installation
+        - ```sudo systemctl status webhook```
+    - Summary of the `webhook` definition file
+        - The webhook definition file has the hook id which is used in the link to trigger, the path to the executable script, and the rules of triggering. 
+    - How to verify definition file was loaded by `webhook`
+        - ```webhook -hooks hooks.json -verbose```
+    - How to verify `webhook` is receiving payloads that trigger it
+      - how to monitor logs from running `webhook`
+          - ```journalctl -u webhook.service -f```
+      - what to look for in `docker` process views
+          - Status of the webhook triggering the path to the executable file running, and it says successful. 
+    - [Hookfile](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/project5/deployement/hooks.json)
+2. Configure a `webhook` Service on EC2 Instance 
+    - Summary of `webhook` service file contents
+        -  This file defines a systemd service that runs the webhook as  Ubuntu in the background on the EC2 instance using hooks.json on port 9000. It ensures the service starts on boot and automatically restarts if it stops.
+    - How to `enable` and `start` the `webhook` service
+    - ```
+      sudo systemctl daemon-reload
+      sudo systemctl enable webhook
+      sudo systemctl start webhook
+      ```
+    - How to verify `webhook` service is capturing payloads and triggering bash script
+      - ```journalctl -u webhook.service -f``` will tell you if the command is executed 
+    - [Service file](https://github.com/WSU-kduncan/ceg3120-cicd-EthanWoe/blob/main/project5/deployement/webhook.service)
 
-If changes to `index.html` are not showing up on all 3 webservers, there are two common causes:
+# 3. Configuring a Payload Sender
 
-1. The webhook was only redeploying one machine.
-2. The container image was not rebuilt/pushed after editing `index.html`.
+* Justification for selecting GitHub or DockerHub as the payload sender
+    - GitHub is used because it provides built-in webhook support that can automatically send payloads on repository events such as pushes, tags, or releases.
 
-This repo now includes:
+* How to enable your selection to send payloads to the EC2 `webhook` listener
+    - Go to your repository, go to Settings, then Webhooks.
+    - Click Add webhook and give it a name.
+    - Enter the webhook URL ```http://123.123.123.123:9000/hooks/redeploy-app```
+    - Add your secret token/message in the secret field.
+    - Save the webhook configuration.
 
-- `project5/deployement/deploy-all.sh`: fan-out deploy script for `web1`, `web2`, and `web3`.
-- `project5/deployement/hooks.json`: fixed command path and both hook IDs (`redeploy-app` and `redeploy-webhook`) so either endpoint works.
+* Explain what triggers will send a payload to the EC2 `webhook` listener
+    - A payload is sent when pushing commits or tags to the repository.
 
-### Required setup on proxy/webhook host
+* How to verify a successful payload delivery
+    - After pushing changes, GitHub will show the delivery status as successful in the webhook settings.
+    - You can also confirm success by checking your deployed website to see if updates were applied.
 
-1. Ensure `deploy-all.sh` is executable:
-    - `chmod +x /home/ubuntu/ceg3120-cicd-EthanWoe/project5/deployement/deploy-all.sh`
-2. Ensure passwordless SSH from proxy to all three webservers as user `ubuntu`.
-3. Restart webhook service:
-    - `sudo systemctl daemon-reload`
-    - `sudo systemctl restart webhook`
-    - `sudo systemctl status webhook`
+* How to validate that your webhook *only triggers* when requests are coming from appropriate sources (GitHub or DockerHub)
+    - Validation is done using the secret passkey in the `hooks.json` file, which ensures only authorized requests trigger the webhook.
 
-### Important
+## 4. Documentaiton
 
-Editing `index.html` in git does not update running containers by itself. You must build and push a new Docker image first, then webhook-triggered redeploy can pull that new image on all servers.
+<img width="1028" height="490" alt="image" src="https://github.com/user-attachments/assets/b797a6b0-603f-49b4-857a-cb4ef7167493" />
+
+The webhook.service, hooks.json, and bash script work together to automate deployment on the EC2 instance as the ubuntu user. The service runs the webhook listener in the background, the hooks.json file defines what endpoint triggers the deployment, and the bash script contains the actual commands that execute when a webhook payload is received.
+
+
+# Citations
+
+* [Lucid Charts](https://lucid.app/documents#/documents?folder_id=home)
+* [adnanh/webhook](https://github.com/adnanh/webhook)
+* [github](https://docs.github.com/en/webhooks/using-webhooks/creating-webhooks)
